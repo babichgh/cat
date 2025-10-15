@@ -35,7 +35,7 @@ int main() {
             std::cout << buffer;
         }
         buffer[file.gcount()] = '\0';
-        std::cout << buffer;
+        std::cout << buffer << std::endl;
 
         file.close();
     } else if (choice == '2') {
