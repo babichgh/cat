@@ -14,7 +14,9 @@ Helps to quickly see file content or write something down on it
    ```
 3. Run
    ```
-   make run
+   ./cat --read/--write [path/to/your/file]
+   ```
+   make run --read/--write [path/to/your/file]
    ```
 ## Project structure
 ```

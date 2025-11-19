@@ -1,53 +1,47 @@
 #include <iostream>
 #include <fstream>
-#include <limits>
 
-void correctPath(std::string& path) {
-    std::ifstream file(path);
-    while (!file.is_open()) {
-        std::cout << "Invalid path! Try again:" << std::endl;
-        std::getline(std::cin, path);
+int main(int argc, char* argv[]) {
+    if (argc < 3 || argc > 3) {
+        std::cerr << "Use:\n"
+                  << "  " << argv[0] << " --read <file>\n"
+                  << "  " << argv[0] << " --write <file>\n";
+        return 1;
     }
-}
 
-int main() {
-    char choice;
-    do {
-        std::cout << "1 - see file content; 2 - write something down: ";
-        std::cin >> choice;
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        if (choice != '1' && choice != '2') {
-            std::cout << "Please enter 1 or 2" << std::endl;
-        } 
-    } while (choice != '1' && choice != '2');
+    std::string command = argv[1];
+    std::string path = argv[2];
 
-    if (choice == '1') {
-        std::string path;
-        std::cout << "Path: ";
-        std::getline(std::cin, path);
-        correctPath(path);
-
+    if (command == "--read") {
         std::ifstream file(path, std::ios::binary);
+        if (!file.is_open()) {
+            std::cerr << "Invalid path: " << path << std::endl;
+            return 1;
+        }
 
         char buffer[1025];
-        while (file.read(buffer, 1024)) {
-            buffer[file.gcount()] = '\0';
+
+        while (file) {
+            file.read(buffer, 1024);
+            std::streamsize count = file.gcount();
+            if (count <= 0) break;
+
+            buffer[count] = '\0';
             std::cout << buffer;
         }
-        buffer[file.gcount()] = '\0';
-        std::cout << buffer << std::endl;
+
+        std::cout << std::endl;
 
         file.close();
-    } else if (choice == '2') {
-        std::string path;
-        std::cout << "Path: ";
-        std::getline(std::cin, path);
-        correctPath(path);
-
+    } else if (command == "--write") {
         std::ofstream file(path, std::ios::app);
-        
+        if (!file.is_open()) {
+            std::cerr << "Invalid path: " << path << std::endl;
+            return 1;
+        }
+
         std::string text;
-        std::cout << "To stop write :q next line:" << std::endl;
+        std::cout << "Enter \":q\" on a new line to exit:" << std::endl;
         std::getline(std::cin, text);
 
         while (text != ":q") {
@@ -56,6 +50,10 @@ int main() {
         }
 
         file.close();
+    } else {
+        std::cerr << "Unknown command: " << command << std::endl;
+        return 1;
     }
+    
     return 0;
 }
