@@ -1,6 +1,6 @@
 CXX = g++
 CXXFLAGS = -Wall -Wextra -std=c++11
-TARGET = cat
+TARGET = bcat
 SOURCE = main.cpp
 
 all: $(TARGET)
